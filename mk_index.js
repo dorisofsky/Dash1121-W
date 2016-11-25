@@ -89,8 +89,8 @@
         var countyDim  = ndx.dimension(function(d) {return d["C_Name"];});
         var county_Disasters = countyDim.group().reduceCount(function(d){return d.Flood1+d.Landslide1+d.Traffic1;});
 
-        var colorScale = d3.scale.ordinal().domain(["Flood", "Landslide", "Traffic", "Flood&Landslide", "Flood&Traffic", "Traffic&Landslide", "Flood&Traffic&Landslide"])
-                                           .range(["#14999e", "#ECA400", "#E85F5C","#999999","#999999","#999999","#999999"]);
+        var colorScale = d3.scale.ordinal().domain(["淹水", "坡地災害", "交通中斷", "淹水&坡地災害", "淹水&交通中斷", "交通中斷&坡地災害", "淹水&交通中斷&坡地災害"])
+          .range(["#14999e", "#ECA400", "#E85F5C", "#999999", "#999999", "#999999", "#999999"]);
 
         //新增minTime、maxTime
         var minTime = timedim.bottom(1)[0].parseTime;
@@ -164,9 +164,9 @@
             .transitionDuration(500)
             .margins({top: 7, right: 0, bottom: 47, left: 55})
             .dimension(hourdim)
-            .group(FloodGroup,"Flood")
-            .stack(LandslideGroup,"Landslide")
-            .stack(TrafficGroup,"Traffic")
+            .group(FloodGroup,"淹水")
+            .stack(LandslideGroup,"坡地災害")
+            .stack(TrafficGroup,"交通中斷")
             .colors(function(disastertype){ return colorScale(disastertype); })
             .elasticY(true)
             .renderHorizontalGridLines(true)

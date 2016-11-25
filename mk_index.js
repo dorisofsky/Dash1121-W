@@ -40,7 +40,7 @@
     function draw() {
 
       var csv = d3.dsv(",", "text/csv;charset=big5");
-      csv("nfa2.csv", function(data) {
+      csv("nfa3.csv", function(data) {
 
         var timeAllparse = d3.time.format("%Y/%m/%e %H:%M").parse,
             dateformat = d3.time.format("%Y/%m/%d"), 
@@ -75,7 +75,7 @@
         var ndx = crossfilter(data);
         var townId = ndx.dimension(function(d) { return d["TOWN_ID"]; });
      
-        var facilities = ndx.dimension(function(d) { return d["geo"]; });
+        var facilities = ndx.dimension(function(d) { return d["geo1"]; });
         var facilitiesGroup = facilities.group().reduceCount();
         var disastertypes = ndx.dimension(function(d){return d["disastertype"];});
         var disastertypesGroup = disastertypes.group().reduceCount();
@@ -87,7 +87,7 @@
         var TrafficGroup = hourdim.group().reduceSum(function(d){return d.Traffic1;});
         //以上有修改
         var countyDim  = ndx.dimension(function(d) {return d["C_Name"];});
-        var county_Disasters = countyDim.group().reduceCount(function(d){return d.Flood+d.Landslide+d.Traffic;});
+        var county_Disasters = countyDim.group().reduceCount(function(d){return d.Flood1+d.Landslide1+d.Traffic1;});
 
         var colorScale = d3.scale.ordinal().domain(["Flood", "Landslide", "Traffic", "Flood&Landslide", "Flood&Traffic", "Traffic&Landslide", "Flood&Traffic&Landslide"])
                                            .range(["#14999e", "#ECA400", "#E85F5C","#999999","#999999","#999999","#999999"]);

@@ -42,7 +42,7 @@
       var csv = d3.dsv(",", "text/csv;charset=big5");
       csv("nfa3.csv", function(data) {
 
-        var timeAllparse = d3.time.format("%Y/%m/%e %H:%M").parse,
+        var timeAllparse = d3.time.format("%Y-%m-%e %H:%M").parse, //請注意!!我這邊有改喔，所以csv內的Time欄位格式，請依照這邊，謝謝~
             dateformat = d3.time.format("%Y/%m/%d"), 
             timeformat = d3.time.format("%H:%M");
 

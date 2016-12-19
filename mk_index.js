@@ -42,7 +42,7 @@
       var csv = d3.dsv(",", "text/csv;charset=big5");
       csv("nfa3.csv", function(data) {
 
-        var timeAllparse = d3.time.format("%Y-%m-%e %H:%M").parse, 
+        var timeAllparse = d3.time.format("%Y-%m-%e %H:%M").parse, //請注意!!我這邊有改喔，所以csv內的Time欄位格式，請依照這邊，謝謝~
             dateformat = d3.time.format("%Y/%m/%d"), 
             timeformat = d3.time.format("%H:%M");
 
@@ -50,47 +50,49 @@
             d.parseTime=timeAllparse(d.Time);
             d.date=dateformat(d.parseTime); 
             d.tt=timeformat(d.parseTime);           
-            d.geo1 = d.Lat + "," + d.Lon;
+          // d.Time = timeAllparse(d.Time);
+          d.geo1 = d.Lat + "," + d.Lon;
           
-            var distype = d["disastertype"].split("&");
-            var flood = 0;
-            var traffic = 0;
-            var landslide = 0;
-            if (distype.indexOf("淹水") > -1){
-              flood = flood + 1;            
-            }
-            if (distype.indexOf("交通中斷") > -1){
-              traffic = traffic + 1;            
-            }
-            if (distype.indexOf("坡地災害") > -1){
-              landslide = landslide + 1;            
-            }
-            d.Flood1 = flood;
-            d.Traffic1 = traffic;
-            d.Landslide1 = landslide;
+          var distype = d["disastertype"].split("&");
+          var flood = 0;
+          var traffic = 0;
+          var landslide = 0;
+          if (distype.indexOf("淹水") > -1){
+            flood = flood + 1;            
+          }
+          if (distype.indexOf("交通中斷") > -1){
+            traffic = traffic + 1;            
+          }
+          if (distype.indexOf("坡地災害") > -1){
+            landslide = landslide + 1;            
+          }
+          d.Flood1 = flood;
+          d.Traffic1 = traffic;
+          d.Landslide1 = landslide;
       
         });
 
         var ndx = crossfilter(data);
-        var ndxGroupAll = ndx.groupAll();
-        
         var townId = ndx.dimension(function(d) { return d["TOWN_ID"]; });
      
         var facilities = ndx.dimension(function(d) { return d["geo1"]; });
         var facilitiesGroup = facilities.group().reduceCount();
         var disastertypes = ndx.dimension(function(d){return d["disastertype"];});
         var disastertypesGroup = disastertypes.group().reduceCount();
+        //以下有修改
         var hourdim = ndx.dimension(function(d) { return d3.time.hour(d.parseTime); });  
         var timedim = ndx.dimension(function(d){return d.parseTime;});
         var FloodGroup = hourdim.group().reduceSum(function(d){return d.Flood1;});
         var LandslideGroup = hourdim.group().reduceSum(function(d){return d.Landslide1;});
         var TrafficGroup = hourdim.group().reduceSum(function(d){return d.Traffic1;});
+        //以上有修改
         var countyDim  = ndx.dimension(function(d) {return d["C_Name"];});
         var county_Disasters = countyDim.group().reduceCount(function(d){return d.Flood1+d.Landslide1+d.Traffic1;});
 
         var colorScale = d3.scale.ordinal().domain(["淹水", "坡地災害", "交通中斷", "淹水&坡地災害", "淹水&交通中斷", "交通中斷&坡地災害", "淹水&交通中斷&坡地災害"])
           .range(["#14999e", "#ECA400", "#E85F5C", "#999999", "#999999", "#999999", "#999999"]);
 
+        //新增minTime、maxTime
         var minTime = timedim.bottom(1)[0].parseTime;
         var maxTime = timedim.top(1)[0].parseTime;
 
@@ -140,18 +142,18 @@
           })
           .rowsCap(5);
 
-        
+        var all = ndx.groupAll();
 
         var filterCount = dc.dataCount('.filter-count')
           .dimension(ndx)
-          .group(ndxGroupAll)
+          .group(all)
           .html({
             some: '%filter-count'
           });
 
         var totalCount = dc.dataCount('.total-count')
           .dimension(ndx)
-          .group(ndxGroupAll)
+          .group(all)
           .html({
             some: '/%total-count'
           });
